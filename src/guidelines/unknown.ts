@@ -1,10 +1,12 @@
-let varAny: any; // ❌ sempre que dizemos que uma variavel é do tipo any estamos a desligar o Typescript "type-check"
-let varUnknown: unknown; // ✅ maneira correcta
+//https://www.typescriptlang.org/docs/handbook/type-compatibility.html#any-unknown-object-void-undefined-null-and-never-assignability
+
+let varAny: any; // ❌ Má prática pois estamos a desligar o Typescript "type-check"
+let varUnknown: unknown; // ✅ Boa prática
 
 // varAny.myFunc();
 // varUnknown.myFunc(); // Erro: não podemos acessar métodos não declarados em unknown type
 
-interface IPerson {
+interface Person {
     id: number;
     firstName: string;
     lastName: string;
@@ -13,16 +15,16 @@ interface IPerson {
     age: string;
 }
 
-interface IPlayer extends IPerson {
+interface Player extends Person {
     team: string;
     position: string;
 }
 
-interface IReferee extends IPerson {
+interface Referee extends Person {
     association: string;
 }
 
-const isReferee = (object: unknown): object is IReferee => {
+const isReferee = (object: unknown): object is Referee => {
     if (object !== null && typeof object === "object") {
         return "association" in object;
     }
@@ -30,7 +32,7 @@ const isReferee = (object: unknown): object is IReferee => {
     return false;
 }
 
-const isPlayer = (object: unknown): object is IPlayer => {
+const isPlayer = (object: unknown): object is Player => {
     if (object !== null && typeof object === "object") {
         return "position" in object;
     }
@@ -41,7 +43,7 @@ const isPlayer = (object: unknown): object is IPlayer => {
 const fetchPerson = async () => {
     const response = await fetch("some-end-point");
 
-    // ❌ Errado
+    // ❌ Má prática
     // Até podiamos dizer que o badPerson é do tipo IPerson mas nesta caso como iamos saber se o badPerson é um Referee?!
     // const badPerson: IPerson = await response.json();
 
@@ -54,7 +56,7 @@ const fetchPerson = async () => {
 
     // badPerson
 
-    // ✅ Certo
+    // ✅ Boa prática
     const goodPerson: unknown = await response.json();
 
     // exemplo verifição se é IReferee
